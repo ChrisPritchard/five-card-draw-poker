@@ -1,5 +1,6 @@
 
 open System
+open Elmish
 
 let printcard (rank: int, suit: char) =
     match rank with
@@ -30,10 +31,25 @@ let shuffle (rnd: Random) deck =
 type Game = {
     deck: (int * char) list
     discards: (int * char) list
-    players: Player list
+    players: Player []
 }
 and Player = {
     hand: (int * char) list
     bet: int
     cash: int
 }
+
+type Messages = 
+    | Deal of playerIndex: int
+
+let update message model = 
+    match message, model.deck with
+    | Deal pi, next::rest -> //  when pi >= 0 && pi < model.players.Length && model.players.[pi].hand.Length < 5
+        let newPlayers = 
+            model.players 
+            |> Array.mapi (fun i p -> 
+                if i <> pi then p 
+                else { p with hand = next::p.hand } )
+        { model with players = newPlayers }, Cmd.none
+    | _ -> 
+        model, Cmd.none
