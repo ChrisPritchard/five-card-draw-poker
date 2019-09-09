@@ -1,17 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <RootNamespace>five_card_draw_poker</RootNamespace>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <RootNamespace>five_card_draw_poker</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="Program.fs" />
+    <Compile Include="Model.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Elmish" Version="3.0.6" />
   </ItemGroup>
-
 </Project>
