@@ -10,22 +10,30 @@ let printcard (rank: int, suit: char) =
     | 10 -> sprintf "X%c" suit
     | _ -> sprintf "%i%c" rank suit
 
-let randomdeck (rnd: Random) = 
-    let start = [|0..51|] |> Array.map (fun i -> 
+let standardDeck = 
+    Array.init 52 (fun i -> 
         match i % 4 with
-        | 0 -> (i % 14) + 1, 'S'
-        | 1 -> (i % 14) + 1, 'C'
-        | 2 -> (i % 14) + 1, 'H'
-        | _ -> (i % 14) + 1, 'D')
+        | 0 -> (i % 13) + 2, 'S'
+        | 1 -> (i % 13) + 2, 'C'
+        | 2 -> (i % 13) + 2, 'H'
+        | _ -> (i % 13) + 2, 'D')
+
+let shuffle (rnd: Random) deck = 
     let rec picker deck rem =
         if Array.isEmpty rem then deck
         else
             let deck = rem.[rnd.Next(0, rem.Length)]::deck
             let rem = Array.except (Array.ofList deck) rem
             picker deck rem
-    picker [] start
+    picker [] deck
 
-let random = Random ()
-let test = randomdeck random
-let text = test |> List.map printcard |> String.concat " "
-Console.WriteLine text
+type Game = {
+    deck: (int * char) list
+    discards: (int * char) list
+    players: Player list
+}
+and Player = {
+    hand: (int * char) list
+    bet: int
+    cash: int
+}
