@@ -5,6 +5,11 @@ open Model
 
 type Messages = 
     | Deal of playerIndex: int
+    | DealAll
+    | Bet of playerIndex: int * amount: int
+    | Fold of playerIndex: int
+    | PayOut
+    | GameOver
 
 let update message model = 
     match message, model.deck with

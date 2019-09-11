@@ -42,5 +42,19 @@ and PlayerState =
 3. Next I came up with a list of messages, things that can occur in a game that would trigger a state change:
 
 ```fsharp
+type Messages = 
+    | Deal of playerIndex: int
+    | DealAll
+    | Bet of playerIndex: int * amount: int
+    | Fold of playerIndex: int
+    | PayOut
+    | GameOver
+```
+
+4. With the model and messages in hand, I got to work creating the update function, which mutates a model based on a given message:
+
+```fsharp
 
 ```
+
+Note that some of the cases above will trigger a further update, e.g. GameOver if a payOut eliminates a player.
