@@ -56,3 +56,14 @@ let update message model =
         { model with players = newPlayers; deck = rest }, Cmd.none
     | _ -> 
         model, Cmd.none
+
+// messages:
+// - dealer deals to all players
+//  - start left of dealer and rotate until all have five
+// - set blind bets and set user to after big blind
+// - each player can:
+//  - meet or raise (bet)
+//  - pass
+//  - fold
+// - once all players have met or passed, the hands are revealed, ranked, and the winner gets the cash
+// - game continues until all players are complete
