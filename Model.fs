@@ -1,3 +1,4 @@
+module Model
 
 open System
 open Elmish
@@ -52,6 +53,6 @@ let update message model =
             |> Array.mapi (fun i p -> 
                 if i <> pi then p 
                 else { p with hand = next::p.hand } )
-        { model with players = newPlayers }, Cmd.none
+        { model with players = newPlayers; deck = rest }, Cmd.none
     | _ -> 
         model, Cmd.none
