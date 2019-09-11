@@ -5,6 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Model.fs" />
+    <Compile Include="Cards.fs" />
+    <Compile Include="Update.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
