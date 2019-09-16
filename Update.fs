@@ -24,6 +24,14 @@ let rec nextCard model =
     | next::rest ->
         next, { model with deck = rest }
 
+let nextCards n model =
+    let rec deal acc model n =
+        if n = 0 then acc, model
+        else
+            let next, model = nextCard model
+            deal (next::acc) model (n - 1)
+    deal [] model n
+
 let replaceCurrentPlayer newPlayer model =
     model.players 
     |> Array.mapi (fun i player -> 
@@ -50,9 +58,7 @@ let discardCards cards model =
         model.players.[model.currentPlayerIndex].hand
         |> List.except cards
 
-    let newCards, model = 
-        (([], model), [1..5-afterDiscard.Length])
-        ||> List.fold (fun (acc, model) _ -> let next, model = nextCard model in next::acc, model)
+    let newCards, model = nextCards (5-afterDiscard.Length) model
 
     let replaceHand player = { player with hand = newCards @ afterDiscard }
     let newPlayers = replaceCurrentPlayer replaceHand model
