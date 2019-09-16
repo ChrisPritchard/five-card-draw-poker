@@ -7,7 +7,7 @@ open Cards
 
 type Messages = 
     | Deal
-    | DealAll
+    | Discard of (int * char) list
     | Bet of playerIndex: int * amount: int
     | Fold of playerIndex: int
     | PayOut
@@ -48,6 +48,7 @@ let update message model =
 // messages:
 // - dealer deals to all players
 //  - start left of dealer and rotate until all have five
+// - each player can choose zero to five cards from there hand to discard and be redealt
 // - set blind bets and set user to after big blind
 // - each player can:
 //  - meet or raise (bet)
