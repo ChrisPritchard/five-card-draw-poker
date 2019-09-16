@@ -54,13 +54,11 @@ let rec dealCard model =
     }, nextCommand
 
 let discardCards cards model =
-    let afterDiscard = 
-        model.players.[model.currentPlayerIndex].hand
-        |> List.except cards
+    let newCards, model = nextCards (List.length cards) model
 
-    let newCards, model = nextCards (5-afterDiscard.Length) model
-
-    let replaceHand player = { player with hand = newCards @ afterDiscard }
+    let replaceHand player = 
+        let afterDiscard = List.except cards player.hand
+        { player with hand = newCards @ afterDiscard }
     let newPlayers = replaceCurrentPlayer replaceHand model
 
     { model with 
