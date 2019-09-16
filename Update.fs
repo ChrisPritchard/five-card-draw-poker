@@ -9,8 +9,8 @@ type Messages =
     | Deal
     | Discard of (int * char) list
     | Stay
-    | Bet of playerIndex: int * amount: int
-    | Fold of playerIndex: int
+    | Bet of amount: int
+    | Fold
     | PayOut
     | GameOver
 
@@ -31,7 +31,7 @@ let nextCards n model =
             let next, model = nextCard model
             deal (next::acc) model (n - 1)
     deal [] model n
-
+    
 let replaceCurrentPlayer newPlayer model =
     model.players 
     |> Array.mapi (fun i player -> 

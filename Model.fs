@@ -6,13 +6,10 @@ type Game = {
     players: Player []
     currentPlayerIndex: int
     dealerIndex: int
-    currentPool: int
 }
+with member g.currentPool = g.players |> Array.sumBy (fun p -> p.currentBet)
 and Player = {
     hand: (int * char) list
-    state: PlayerState
     cash: int
+    currentBet: int
 }
-and PlayerState = 
-    | Playing of hand: (int * char) list * bet: int
-    | Folded
