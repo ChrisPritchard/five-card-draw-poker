@@ -5,15 +5,6 @@ open Elmish
 open Model
 open Cards
 
-type Messages = 
-    | Deal
-    | Discard of (int * char) list
-    | Stay
-    | Bet of amount: int
-    | Fold
-    | PayOut
-    | GameOver
-
 let random = Random ()
 
 let rec nextCard model =
@@ -31,6 +22,10 @@ let nextCards n model =
             let next, model = nextCard model
             deal (next::acc) model (n - 1)
     deal [] model n
+
+let nextPlayerIndex model =
+    let next = model.currentPlayerIndex + 1
+    if next = model.players.Length then 0 else next
     
 let replaceCurrentPlayer newPlayer model =
     model.players 
@@ -44,14 +39,15 @@ let rec dealCard model =
     let addCard player = { player with hand = nextCard::player.hand }
     let newPlayers = replaceCurrentPlayer addCard model
 
-    let nextCommand = 
+    let nextState = 
         if Array.exists (fun p -> p.hand.Length < 5) newPlayers
-        then Cmd.ofMsg Deal else Cmd.none
+        then Dealing else Discards
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = model.currentPlayerIndex + 1 
-    }, nextCommand
+        currentPlayerIndex = nextPlayerIndex model
+        state = nextState
+    }, Cmd.none
 
 let discardCards cards model =
     let newCards, model = nextCards (List.length cards) model
@@ -61,9 +57,14 @@ let discardCards cards model =
         { player with hand = newCards @ afterDiscard }
     let newPlayers = replaceCurrentPlayer replaceHand model
 
+    let nextState = 
+        if model.currentPlayerIndex = model.dealerIndex then Betting
+        else Discards
+
     { model with 
         players = newPlayers
-        currentPlayerIndex = model.currentPlayerIndex + 1 
+        currentPlayerIndex = nextPlayerIndex model
+        state = nextState
     }, Cmd.none
 
 let update message model = 
@@ -72,8 +73,6 @@ let update message model =
         dealCard model
     | Discard cards ->
         discardCards cards model
-    | Stay ->
-        { model with currentPlayerIndex = model.currentPlayerIndex + 1 }, Cmd.none
     | _ -> 
         failwith "invalid message for model state"
 
