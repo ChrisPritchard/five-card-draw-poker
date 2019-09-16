@@ -6,7 +6,7 @@ open Model
 open Cards
 
 type Messages = 
-    | Deal of playerIndex: int
+    | Deal
     | DealAll
     | Bet of playerIndex: int * amount: int
     | Fold of playerIndex: int
@@ -15,23 +15,33 @@ type Messages =
 
 let random = Random ()
 
-let rec dealCard playerIndex model =
+let rec dealCard model =
     match model.deck with
     | [] ->
         let shuffled = shuffle random (List.toArray model.discards)
-        dealCard playerIndex { model with deck = shuffled; discards = [] }
+        dealCard { model with deck = shuffled; discards = [] }
     | next::rest ->
+
         let newPlayers = 
             model.players 
             |> Array.mapi (fun i player -> 
-                if i = playerIndex then { player with hand = next::player.hand }
+                if i = model.currentPlayerIndex then { player with hand = next::player.hand }
                 else player)
-        { model with players = newPlayers; deck = rest }
+
+        let nextCommand = 
+            if Array.exists (fun p -> p.hand.Length < 5) newPlayers
+            then Cmd.ofMsg Deal else Cmd.none
+
+        { model with 
+            players = newPlayers
+            deck = rest
+            currentPlayerIndex = model.currentPlayerIndex + 1 
+        }, nextCommand
 
 let update message model = 
     match message with
-    | Deal pi when pi >= 0 && pi < model.players.Length && model.players.[pi].hand.Length < 5 ->
-        dealCard pi model, Cmd.none
+    | Deal ->
+        dealCard model
     | _ -> 
         failwith "invalid message for model state"
 
