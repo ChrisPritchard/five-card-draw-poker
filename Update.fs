@@ -8,6 +8,7 @@ open Cards
 type Messages = 
     | Deal
     | Discard of (int * char) list
+    | Stay
     | Bet of playerIndex: int * amount: int
     | Fold of playerIndex: int
     | PayOut
@@ -38,10 +39,20 @@ let rec dealCard model =
             currentPlayerIndex = model.currentPlayerIndex + 1 
         }, nextCommand
 
+let discardCards cards model =
+    // remove cards from player hand
+    // deal more cards until hand is full
+    // increment player index
+    model, Cmd.none
+
 let update message model = 
     match message with
     | Deal ->
         dealCard model
+    | Discard cards ->
+        discardCards cards model
+    | Stay ->
+        { model with currentPlayerIndex = model.currentPlayerIndex + 1 }, Cmd.none
     | _ -> 
         failwith "invalid message for model state"
 
