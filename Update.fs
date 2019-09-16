@@ -16,17 +16,21 @@ type Messages =
 
 let random = Random ()
 
-let rec dealCard model =
+let rec nextCard model =
     match model.deck with
     | [] ->
         let shuffled = shuffle random (List.toArray model.discards)
-        dealCard { model with deck = shuffled; discards = [] }
+        nextCard { model with deck = shuffled; discards = [] }
     | next::rest ->
+        next, { model with deck = rest }
+
+let rec dealCard model =
+        let nextCard, model = nextCard model
 
         let newPlayers = 
             model.players 
             |> Array.mapi (fun i player -> 
-                if i = model.currentPlayerIndex then { player with hand = next::player.hand }
+                if i = model.currentPlayerIndex then { player with hand = nextCard::player.hand }
                 else player)
 
         let nextCommand = 
@@ -35,7 +39,6 @@ let rec dealCard model =
 
         { model with 
             players = newPlayers
-            deck = rest
             currentPlayerIndex = model.currentPlayerIndex + 1 
         }, nextCommand
 
