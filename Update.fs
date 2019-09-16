@@ -1,7 +1,9 @@
 ﻿module Update
 
+open System
 open Elmish
 open Model
+open Cards
 
 type Messages = 
     | Deal of playerIndex: int
@@ -11,17 +13,27 @@ type Messages =
     | PayOut
     | GameOver
 
-let update message model = 
-    match message, model.deck with
-    | Deal pi, next::rest -> //  when pi >= 0 && pi < model.players.Length && model.players.[pi].hand.Length < 5
+let random = Random ()
+
+let rec dealCard playerIndex model =
+    match model.deck with
+    | [] ->
+        let shuffled = shuffle random (List.toArray model.discards)
+        dealCard playerIndex { model with deck = shuffled; discards = [] }
+    | next::rest ->
         let newPlayers = 
             model.players 
-            |> Array.mapi (fun i p -> 
-                if i <> pi then p 
-                else { p with hand = next::p.hand } )
-        { model with players = newPlayers; deck = rest }, Cmd.none
+            |> Array.mapi (fun i player -> 
+                if i = playerIndex then { player with hand = next::player.hand }
+                else player)
+        { model with players = newPlayers; deck = rest }
+
+let update message model = 
+    match message with
+    | Deal pi when pi >= 0 && pi < model.players.Length && model.players.[pi].hand.Length < 5 ->
+        dealCard pi model, Cmd.none
     | _ -> 
-        model, Cmd.none
+        failwith "invalid message for model state"
 
 // messages:
 // - dealer deals to all players
