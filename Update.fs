@@ -25,28 +25,42 @@ let rec nextCard model =
         next, { model with deck = rest }
 
 let rec dealCard model =
-        let nextCard, model = nextCard model
+    let nextCard, model = nextCard model
 
-        let newPlayers = 
-            model.players 
-            |> Array.mapi (fun i player -> 
-                if i = model.currentPlayerIndex then { player with hand = nextCard::player.hand }
-                else player)
+    let newPlayers = 
+        model.players 
+        |> Array.mapi (fun i player -> 
+            if i = model.currentPlayerIndex then { player with hand = nextCard::player.hand }
+            else player)
 
-        let nextCommand = 
-            if Array.exists (fun p -> p.hand.Length < 5) newPlayers
-            then Cmd.ofMsg Deal else Cmd.none
+    let nextCommand = 
+        if Array.exists (fun p -> p.hand.Length < 5) newPlayers
+        then Cmd.ofMsg Deal else Cmd.none
 
-        { model with 
-            players = newPlayers
-            currentPlayerIndex = model.currentPlayerIndex + 1 
-        }, nextCommand
+    { model with 
+        players = newPlayers
+        currentPlayerIndex = model.currentPlayerIndex + 1 
+    }, nextCommand
 
 let discardCards cards model =
-    // remove cards from player hand
-    // deal more cards until hand is full
-    // increment player index
-    model, Cmd.none
+    let afterDiscard = 
+        model.players.[model.currentPlayerIndex].hand
+        |> List.except cards
+
+    let newCards, model = 
+        (([], model), [1..5-afterDiscard.Length])
+        ||> List.fold (fun (acc, model) _ -> let next, model = nextCard model in next::acc, model)
+
+    let newPlayers = 
+        model.players 
+        |> Array.mapi (fun i player -> 
+            if i = model.currentPlayerIndex then { model.players.[model.currentPlayerIndex] with hand = newCards @ afterDiscard }
+            else player)
+
+    { model with 
+        players = newPlayers
+        currentPlayerIndex = model.currentPlayerIndex + 1 
+    }, Cmd.none
 
 let update message model = 
     match message with
