@@ -24,14 +24,17 @@ let rec nextCard model =
     | next::rest ->
         next, { model with deck = rest }
 
+let replaceCurrentPlayer newPlayer model =
+    model.players 
+    |> Array.mapi (fun i player -> 
+        if i = model.currentPlayerIndex then newPlayer player
+        else player)
+
 let rec dealCard model =
     let nextCard, model = nextCard model
 
-    let newPlayers = 
-        model.players 
-        |> Array.mapi (fun i player -> 
-            if i = model.currentPlayerIndex then { player with hand = nextCard::player.hand }
-            else player)
+    let addCard player = { player with hand = nextCard::player.hand }
+    let newPlayers = replaceCurrentPlayer addCard model
 
     let nextCommand = 
         if Array.exists (fun p -> p.hand.Length < 5) newPlayers
@@ -51,11 +54,8 @@ let discardCards cards model =
         (([], model), [1..5-afterDiscard.Length])
         ||> List.fold (fun (acc, model) _ -> let next, model = nextCard model in next::acc, model)
 
-    let newPlayers = 
-        model.players 
-        |> Array.mapi (fun i player -> 
-            if i = model.currentPlayerIndex then { model.players.[model.currentPlayerIndex] with hand = newCards @ afterDiscard }
-            else player)
+    let replaceHand player = { player with hand = newCards @ afterDiscard }
+    let newPlayers = replaceCurrentPlayer replaceHand model
 
     { model with 
         players = newPlayers
