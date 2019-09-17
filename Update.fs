@@ -67,12 +67,31 @@ let discardCards cards model =
         state = nextState
     }, Cmd.none
 
+let betAmount amount model =
+    let increaseBet player = 
+        { player with currentBet = player.currentBet + amount }
+    let newPlayers = 
+        if amount > 0 then replaceCurrentPlayer increaseBet model
+        else model.players
+
+    let nextState = 
+        if amount = 0 then Reveal
+        else Betting
+
+    { model with 
+        players = newPlayers
+        currentPlayerIndex = nextPlayerIndex model
+        state = nextState
+    }, Cmd.none
+
 let update message model = 
     match message with
     | Deal ->
         dealCard model
     | Discard cards ->
         discardCards cards model
+    | Bet amount when model.currentPlayer.currentBet + amount >= model.maxBet ->
+        betAmount amount model
     | _ -> 
         failwith "invalid message for model state"
 

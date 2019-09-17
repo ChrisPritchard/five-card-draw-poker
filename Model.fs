@@ -10,6 +10,7 @@ type Game = {
 }
 with 
     member g.currentPool = g.players |> Array.sumBy (fun p -> p.currentBet)
+    member g.currentPlayer = g.players.[g.currentPlayerIndex]
     member g.maxBet = g.players |> Seq.map (fun p -> p.currentBet) |> Seq.max
 and Player = {
     hand: (int * char) list
@@ -20,7 +21,7 @@ and GameState =
     | Dealing
     | Discards
     | Betting
-    | HandResult
+    | Reveal
     | GameOver
     
 type Messages = 
