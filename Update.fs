@@ -84,6 +84,17 @@ let betAmount amount model =
         state = nextState
     }, Cmd.none
 
+let foldPlayer model =
+    let foldPlayer player = { player with hand = [] }
+    let newPlayers = replaceCurrentPlayer foldPlayer model
+    let newDiscards = model.currentPlayer.hand @ model.discards
+
+    { model with 
+        players = newPlayers
+        currentPlayerIndex = nextPlayerIndex model
+        discards = newDiscards
+    }, Cmd.none
+
 let update message model = 
     match message with
     | Deal ->
@@ -92,6 +103,8 @@ let update message model =
         discardCards cards model
     | Bet amount when model.currentPlayer.currentBet + amount >= model.maxBet ->
         betAmount amount model
+    | Fold ->
+        foldPlayer model
     | _ -> 
         failwith "invalid message for model state"
 
