@@ -69,8 +69,8 @@ let private rankHand (hand: (int * char) list) =
         else
             (HighCard (get 1), [])
 
-let bestHand (hands: (int * char) list list) =
-    hands |> List.map (fun h -> h, rankHand h)
-          |> List.sortByDescending snd
-          |> List.head 
+let bestHand (hands: seq<(int * char) list>) =
+    hands |> Seq.map (fun h -> h, rankHand h)
+          |> Seq.sortByDescending snd
+          |> Seq.head 
           |> fst

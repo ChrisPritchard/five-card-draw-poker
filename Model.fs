@@ -21,7 +21,7 @@ and GameState =
     | Dealing
     | Discards
     | Betting
-    | Reveal
+    | Reveal of winnerIndex: int
     | GameOver
     
 type Messages = 

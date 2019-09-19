@@ -67,6 +67,19 @@ let discardCards cards model =
         state = nextState
     }, Cmd.none
 
+let findWinner model =
+    let winningHand = 
+        model.players 
+        |> Array.choose (fun player -> 
+            match player.hand with [] -> None | _ -> Some player.hand)
+        |> bestHand
+    let winnerIndex = 
+        model.players 
+        |> Seq.indexed 
+        |> Seq.pick (fun (i, player) -> 
+            if player.hand = winningHand then Some i else None)
+    Reveal winnerIndex
+
 let betAmount amount model =
     let increaseBet player = 
         { player with currentBet = player.currentBet + amount }
@@ -75,7 +88,7 @@ let betAmount amount model =
         else model.players
 
     let nextState = 
-        if amount = 0 then Reveal
+        if amount = 0 then findWinner model
         else Betting
 
     { model with 
@@ -89,11 +102,19 @@ let foldPlayer model =
     let newPlayers = replaceCurrentPlayer foldPlayer model
     let newDiscards = model.currentPlayer.hand @ model.discards
 
+    let nextState = 
+        if (Array.filter (fun p -> p.hand <> []) model.players).Length = 1 then findWinner model
+        else Betting
+
     { model with 
         players = newPlayers
         currentPlayerIndex = nextPlayerIndex model
         discards = newDiscards
+        state = nextState
     }, Cmd.none
+
+let payOutToWinner winner model =
+    model, Cmd.none
 
 let update message model = 
     match message with
@@ -105,17 +126,10 @@ let update message model =
         betAmount amount model
     | Fold ->
         foldPlayer model
+    | PayOut ->
+        match model.state with
+        | Reveal winner ->
+            payOutToWinner winner model
+        | _ -> failwith "cannot payout without winner"
     | _ -> 
         failwith "invalid message for model state"
-
-// messages:
-// - dealer deals to all players
-//  - start left of dealer and rotate until all have five
-// - each player can choose zero to five cards from there hand to discard and be redealt
-// - set blind bets and set user to after big blind
-// - each player can:
-//  - meet or raise (bet)
-//  - pass
-//  - fold
-// - once all players have met or passed, the hands are revealed, ranked, and the winner gets the cash
-// - game continues until all players are complete
