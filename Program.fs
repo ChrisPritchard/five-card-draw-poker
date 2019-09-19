@@ -1,18 +1,10 @@
 ﻿open System
 open Elmish
+open Terminal
 open Model
 open Cards
 open Update
 open View
-
-let rec getInteger min (askMessage: string) =
-    Console.Write askMessage
-    let result = Console.ReadLine ()
-    let valid, parsed = Int32.TryParse result
-    if valid && parsed >= min then parsed
-    else
-        printfn "invalid integer or number less than %i" min
-        getInteger min askMessage
 
 [<EntryPoint>]
 let main _ =

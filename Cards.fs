@@ -2,15 +2,6 @@
 
 open System
 
-let printcard (rank: int, suit: char) =
-    match rank with
-    | 14 -> sprintf "A%c" suit
-    | 13 -> sprintf "K%c" suit
-    | 12 -> sprintf "Q%c" suit
-    | 11 -> sprintf "J%c" suit
-    | 10 -> sprintf "X%c" suit
-    | _ -> sprintf "%i%c" rank suit
-
 let standardDeck = 
     Array.init 52 (fun i -> 
         match i % 4 with
