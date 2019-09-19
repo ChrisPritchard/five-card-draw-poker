@@ -13,11 +13,13 @@ let printCard (rank: int, suit: char) =
 
 let readLine = Console.ReadLine
 
-let rec getInteger min askMessage =
+let rec getInteger min defaultResult askMessage =
     printf "%s" askMessage
     let result = readLine ()
-    let valid, parsed = Int32.TryParse result
-    if valid && parsed >= min then parsed
+    if result = "" then defaultResult
     else
-        printfn "invalid integer or number less than %i" min
-        getInteger min askMessage
+        let valid, parsed = Int32.TryParse result
+        if valid && parsed >= min then parsed
+        else
+            printfn "invalid integer or number less than %i" min
+            getInteger min defaultResult askMessage

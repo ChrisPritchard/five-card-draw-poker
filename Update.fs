@@ -1,16 +1,13 @@
 ﻿module Update
 
-open System
 open Elmish
 open Model
 open Cards
 
-let random = Random ()
-
 let rec nextCard model =
     match model.deck with
     | [] ->
-        let shuffled = shuffle random (List.toArray model.discards)
+        let shuffled = shuffle model.rng (List.toArray model.discards)
         nextCard { model with deck = shuffled; discards = [] }
     | next::rest ->
         next, { model with deck = rest }

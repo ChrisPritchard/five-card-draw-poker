@@ -1,6 +1,9 @@
 module Model
 
+open System
+
 type Game = {
+    rng: Random
     deck: (int * char) list
     discards: (int * char) list
     players: Player []
