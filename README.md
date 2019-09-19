@@ -56,3 +56,8 @@ type Messages =
   - For each message, I created a function that transforms the model into the new gamestate
   - The core update function calls these sub functions based on the message that comes through
   - Where appropriate, the update function can gate a given sub function based on model conditions (e.g. preventing a bet of less than the minimum)
+
+5. Next I built the view. The view in Elmish ties everything together, as its job is to render something for the current model state, and is given access to the 'dispatch' function which allows it to issue messages. These messages trigger the update method, which alters the model, which retriggers the view creating the elegant flow of a model-view-update program.
+   
+    Elmish itself, as a framework, doesn't specify what the view should do. With Fable and its extensions the view renders out HTML, with Elmish WPF it modifies the bindings for the view, with my Xelmish framework it generates a set of viewables that are rendered by the game loop. For this program we are going to use the console only, so the view will print out the model state and listen for commands from the user.
+
