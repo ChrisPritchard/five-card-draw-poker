@@ -59,5 +59,7 @@ type Messages =
 
 5. Next I built the view. The view in Elmish ties everything together, as its job is to render something for the current model state, and is given access to the 'dispatch' function which allows it to issue messages. These messages trigger the update method, which alters the model, which retriggers the view creating the elegant flow of a model-view-update program.
    
-    Elmish itself, as a framework, doesn't specify what the view should do. With Fable and its extensions the view renders out HTML, with Elmish WPF it modifies the bindings for the view, with my Xelmish framework it generates a set of viewables that are rendered by the game loop. For this program we are going to use the console only, so the view will print out the model state and listen for commands from the user.
+    Elmish itself, as a framework, doesn't specify what the view should do. With Fable and its extensions the view renders out HTML, with Elmish WPF it modifies the bindings for the view, with my Xelmish framework it generates a set of viewables that are rendered by the game loop. The view could even be its own automatic function, dispatching messages immediately based on model state or AI directives.
+
+    For this program we are going to use the console only, so the view will print out the model state and listen for commands from the user. It will not return anything (in WPF and Xelmish, the returned 'view state' is then passed to a rendering engine like the MonoGame core loop, via the `setState` function on Elmish's Program structure).
 
