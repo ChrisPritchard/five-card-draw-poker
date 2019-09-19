@@ -51,10 +51,8 @@ type Messages =
     | GameOver
 ```
 
-4. With the model and messages in hand, I got to work creating the update function, which mutates a model based on a given message:
+4. With the model and messages in hand, I got to work creating the update function, which mutates a model based on a given message. Through the course of this work, the game's model and messages were altered as they were implemented.
 
-```fsharp
-
-```
-
-Note that some of the cases above will trigger a further update, e.g. GameOver if a payOut eliminates a player.
+  - For each message, I created a function that transforms the model into the new gamestate
+  - The core update function calls these sub functions based on the message that comes through
+  - Where appropriate, the update function can gate a given sub function based on model conditions (e.g. preventing a bet of less than the minimum)
