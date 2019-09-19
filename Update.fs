@@ -23,9 +23,16 @@ let nextCards n model =
             deal (next::acc) model (n - 1)
     deal [] model n
 
-let nextPlayerIndex model =
+let rec nextPlayerIndex model =
     let next = model.currentPlayerIndex + 1
-    if next = model.players.Length then 0 else next
+    let wrap = if next = model.players.Length then 0 else next
+    if model.players.[wrap].cash = 0 then
+        nextPlayerIndex { model with currentPlayerIndex = wrap }
+    else
+        wrap
+
+let rec nextDealerIndex model =
+    nextPlayerIndex { model with currentPlayerIndex = model.dealerIndex }
     
 let replaceCurrentPlayer newPlayer model =
     model.players 
@@ -113,8 +120,28 @@ let foldPlayer model =
         state = nextState
     }, Cmd.none
 
-let payOutToWinner winner model =
-    model, Cmd.none
+let endRound winner model =
+    let hands = model.players |> Seq.collect (fun p -> p.hand) |> Seq.toList
+    let newDiscards = hands @ model.discards
+
+    let newPlayers = 
+        model.players
+        |> Array.mapi (fun i player ->
+            let toAdd = if i = winner then model.currentPool else 0
+            { player with hand = []; currentBet = 0; cash = player.cash + toAdd })
+
+    let nextState = 
+        if (Array.filter (fun p -> p.cash > 0) model.players).Length = 1 then GameOver
+        else Dealing
+
+    let newModel = 
+        { model with 
+            players = newPlayers
+            currentPlayerIndex = nextDealerIndex model // we bump this by one in the next statement
+            dealerIndex = nextDealerIndex model
+            discards = newDiscards
+            state = nextState }
+    { newModel with currentPlayerIndex = nextPlayerIndex newModel }, Cmd.none
 
 let update message model = 
     match message with
@@ -129,7 +156,7 @@ let update message model =
     | PayOut ->
         match model.state with
         | Reveal winner ->
-            payOutToWinner winner model
+            endRound winner model
         | _ -> failwith "cannot payout without winner"
     | _ -> 
         failwith "invalid message for model state"

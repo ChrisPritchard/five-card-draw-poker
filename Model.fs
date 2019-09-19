@@ -30,4 +30,3 @@ type Messages =
     | Bet of amount: int
     | Fold
     | PayOut
-    | GameOver
