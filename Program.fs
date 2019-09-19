@@ -12,9 +12,9 @@ let main _ =
     printfn "Five-Card-Draw Poker!"
     printfn "====================="
     printfn ""
-    let numPlayers = getInteger 2 5 "Enter number of players (default 5): "
+    let numPlayers = readInt 2 5 "Enter number of players (default 5): "
     printfn ""
-    let startingCash = getInteger 1 1000 "Enter cash per player (default 1000): "
+    let startingCash = readInt 1 1000 "Enter cash per player (default 1000): "
 
     let players = 
         Array.init numPlayers (fun _ ->
