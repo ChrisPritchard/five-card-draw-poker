@@ -1,6 +1,16 @@
 ﻿module Terminal
 
 open System
+open System.Threading
+
+let clearTerminal () =
+    Console.Clear ()
+    Console.CursorLeft <- 0
+    Console.CursorTop <- 0
+
+let pause milliseconds = 
+    let time = TimeSpan.FromMilliseconds milliseconds
+    Thread.Sleep time
 
 let printCard (rank: int, suit: char) =
     match rank with

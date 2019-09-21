@@ -3,8 +3,16 @@
 open Model
 open Terminal
 
+let renderHands model = 
+    for i = model.players.Length downto 1 do
+        let hand =
+            if i = 1 then model.players.[0].hand |> Seq.map printCard |> String.concat " "
+            else Array.create model.players.[i-1].hand.Length "##" |> String.concat " "
+        printfn "Player %i: %s" (i - 1) hand
+
 let renderDealing model dispatch =
-    printfn "Dealing player %i..." model.currentPlayerIndex
+    renderHands model
+    pause 500.
     dispatch Deal
 
 let renderDiscards model dispatch =
@@ -27,6 +35,7 @@ let renderReveal winner model dispatch = ()
 let renderGameOver model dispatch = ()
 
 let view model dispatch =
+    clearTerminal ()
     match model.state with
     | Dealing ->
         renderDealing model dispatch
