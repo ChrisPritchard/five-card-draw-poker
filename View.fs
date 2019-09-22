@@ -39,6 +39,8 @@ let aiDiscards model dispatch =
 let rec renderBetting (model: Game) dispatch =
     printfn "Your cards: %s" (handString model.currentPlayer.hand)
     printfn "Your current bet: $%i" model.currentPlayer.currentBet
+    printfn "Minimum bet: $%i" (model.maxBet - model.currentPlayer.currentBet)
+    printfn "Current pool: $%i" model.currentPool
     printfn ""
     // TODO ask for bet, raise, meet or fold
     printfn "Enter Y to raise or bet $100"

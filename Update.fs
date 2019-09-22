@@ -20,16 +20,16 @@ let nextCards n model =
             deal (next::acc) model (n - 1)
     deal [] model n
 
-let rec nextPlayerIndex model =
+let rec nextPlayerIndex model mustHaveHand =
     let next = model.currentPlayerIndex + 1
     let wrap = if next = model.players.Length then 0 else next
-    if model.players.[wrap].cash = 0 then
-        nextPlayerIndex { model with currentPlayerIndex = wrap }
+    if model.players.[wrap].cash = 0 || (mustHaveHand && model.players.[wrap].hand = []) then
+        nextPlayerIndex { model with currentPlayerIndex = wrap } mustHaveHand
     else
         wrap
 
 let rec nextDealerIndex model =
-    nextPlayerIndex { model with currentPlayerIndex = model.dealerIndex }
+    nextPlayerIndex { model with currentPlayerIndex = model.dealerIndex } false
     
 let replaceCurrentPlayer newPlayer model =
     model.players 
@@ -49,7 +49,7 @@ let rec dealCard model =
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = nextPlayerIndex model
+        currentPlayerIndex = nextPlayerIndex model true
         state = nextState
     }, Cmd.none
 
@@ -67,7 +67,7 @@ let discardCards cards model =
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = nextPlayerIndex model
+        currentPlayerIndex = nextPlayerIndex model true
         state = nextState
     }, Cmd.none
 
@@ -97,7 +97,7 @@ let betAmount amount model =
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = nextPlayerIndex model
+        currentPlayerIndex = nextPlayerIndex model true
         state = nextState
     }, Cmd.none
 
@@ -112,7 +112,7 @@ let foldPlayer model =
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = nextPlayerIndex model
+        currentPlayerIndex = nextPlayerIndex model true
         discards = newDiscards
         state = nextState
     }, Cmd.none
@@ -141,7 +141,7 @@ let endRound winner model =
             dealerIndex = nextDealerIndex model
             discards = newDiscards
             state = nextState }
-    { newModel with currentPlayerIndex = nextPlayerIndex newModel }, Cmd.none
+    { newModel with currentPlayerIndex = nextPlayerIndex newModel false }, Cmd.none
 
 let update message model = 
     match message with
