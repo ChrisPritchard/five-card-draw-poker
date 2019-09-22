@@ -131,8 +131,11 @@ let endRound winner model =
         if (Array.filter (fun p -> p.cash > 0) model.players).Length = 1 then GameOver
         else Dealing
 
+    let newRounds = if nextState = GameOver then model.rounds else model.rounds + 1
+
     let newModel = 
         { model with 
+            rounds = newRounds
             players = newPlayers
             currentPlayerIndex = nextDealerIndex model // we bump this by one in the next statement
             dealerIndex = nextDealerIndex model

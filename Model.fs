@@ -4,6 +4,7 @@ open System
 
 type Game = {
     rng: Random
+    rounds: int
     deck: (int * char) list
     discards: (int * char) list
     players: Player []
@@ -15,6 +16,7 @@ with
     member g.currentPool = g.players |> Array.sumBy (fun p -> p.currentBet)
     member g.currentPlayer = g.players.[g.currentPlayerIndex]
     member g.maxBet = g.players |> Seq.map (fun p -> p.currentBet) |> Seq.max
+    member g.finalWinner () = g.players |> Array.indexed |> Array.find (fun (_, p) -> p.hand <> []) |> fst
 and Player = {
     hand: (int * char) list
     cash: int

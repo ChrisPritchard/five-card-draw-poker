@@ -28,6 +28,7 @@ let main _ =
     let init _ =
         {
             rng = random
+            rounds = 1
             deck = shuffle random standardDeck
             discards = []
             players = players

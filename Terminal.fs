@@ -22,6 +22,7 @@ let printCard (rank: int, suit: char) =
     | _ -> sprintf "%i%c" rank suit
 
 let readLine = Console.ReadLine
+let readKey = Console.ReadKey
 
 let rec readInt min defaultResult askMessage =
     printf "%s" askMessage
