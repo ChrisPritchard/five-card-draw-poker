@@ -91,6 +91,10 @@ let betAmount amount model =
         if amount > 0 then replaceCurrentPlayer increaseBet model
         else model.players
 
+    // TODO: need to determine whether this is a meet or raise: if all players are meeting the min bet, then the hand is over
+    // any player that raises the bet must then be the check for meeting: if all players meet that bet then its over
+    // perhaps force a min bet, and then track if the bet matches the min bet (and isn't equal to it)?
+
     let nextState = 
         if amount = 0 then findWinner model
         else Betting
