@@ -20,7 +20,7 @@ let renderDealing model dispatch =
     printfn ""
 
     renderHands model true
-    pause 500.
+    pause 250.
     dispatch Deal
 
 let renderDiscards (model: Game) dispatch =
@@ -37,18 +37,26 @@ let aiDiscards model dispatch =
     dispatch (Discard [])
 
 let rec renderBetting (model: Game) dispatch =
+
+    let minBet = 
+        let required = model.maxBet - model.currentPlayer.currentBet
+        min required model.currentPlayer.cash
+
     printfn "Your cards: %s" (handString model.currentPlayer.hand)
     printfn "Your current bet: $%i" model.currentPlayer.currentBet
-    printfn "Minimum bet: $%i" (model.maxBet - model.currentPlayer.currentBet)
+    printfn "Minimum bet: $%i" minBet
     printfn "Current pool: $%i" model.currentPool
     printfn ""
+
     // TODO ask for bet, raise, meet or fold
-    printfn "Enter Y to raise or bet $100"
-    printfn "Or enter to stay"
+    let possible = min (minBet + 100) model.currentPlayer.cash
+
+    printfn "Enter Y to raise or bet $%i" possible
+    printfn "Or enter to meet minimum"
     
     let choice = (readLine ()).ToLowerInvariant ()
-    if choice = "" then dispatch (Bet 0)
-    elif choice = "y" then dispatch (Bet 100)
+    if choice = "" then dispatch (Bet minBet)
+    elif choice = "y" then dispatch (Bet possible)
     else
         printfn "invalid entry, please try again"
         printfn ""
@@ -56,9 +64,12 @@ let rec renderBetting (model: Game) dispatch =
 
 let aiBetting (model: Game) dispatch =
     // TODO AI
-    let minBet = model.maxBet - model.currentPlayer.currentBet
-    printfn "Player %i meets the current bet $%i" model.currentPlayerIndex minBet
-    dispatch (Bet minBet)
+    let bet = 
+        let minBet = model.maxBet - model.currentPlayer.currentBet
+        if minBet = 0 then min 100 model.currentPlayer.cash else minBet
+    
+    printfn "Player %i meets the current bet $%i" model.currentPlayerIndex bet
+    dispatch (Bet bet)
 
 let renderReveal winner model dispatch =
     renderHands model false
