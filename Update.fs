@@ -95,8 +95,9 @@ let betAmount amount model =
     // any player that raises the bet must then be the check for meeting: if all players meet that bet then its over
     // perhaps force a min bet, and then track if the bet matches the min bet (and isn't equal to it)?
 
+    let isEndOfBetRound = model.currentPlayer.currentBet = model.maxBet && amount = 0
     let nextState = 
-        if amount = 0 then findWinner model
+        if isEndOfBetRound then findWinner model
         else Betting
 
     { model with 
@@ -153,7 +154,7 @@ let update message model =
         dealCard model
     | Discard cards ->
         discardCards cards model
-    | Bet amount when model.currentPlayer.currentBet + amount >= model.maxBet ->
+    | Bet amount when model.currentPlayer.currentBet + amount >= model.maxBet || model.currentPlayer.currentBet + amount = model.currentPlayer.cash ->
         betAmount amount model
     | Fold ->
         foldPlayer model
