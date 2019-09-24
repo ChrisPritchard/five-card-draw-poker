@@ -13,6 +13,8 @@ let renderHands model hideOthers =
         printfn "Player %i: %s" (i - 1) hand
 
 let renderDealing model dispatch =
+    clearTerminal ()
+
     printfn "Current player cash amounts:"
     for i = model.players.Length downto 1 do
         printfn "Player %i: $%i" (i - 1) model.players.[i-1].cash
@@ -20,11 +22,13 @@ let renderDealing model dispatch =
     printfn ""
 
     renderHands model true
-    pause 250.
+    printfn ""
+
+    pause 100.
     dispatch Deal
 
 let renderDiscards (model: Game) dispatch =
-    printfn "Your cards: %s" (handString model.currentPlayer.hand)
+    printfn "Choose cards to discard from: %s" (handString model.currentPlayer.hand)
     printfn ""
     // TODO select for discard
     printfn "Press enter to continue"
@@ -63,13 +67,17 @@ let rec renderBetting (model: Game) dispatch =
         renderBetting model dispatch
 
 let aiBetting (model: Game) dispatch =
-    // TODO AI
-    let bet = 
-        let minBet = model.maxBet - model.currentPlayer.currentBet
-        if minBet = 0 then min 100 model.currentPlayer.cash else minBet
     
-    printfn "Player %i meets the current bet $%i" model.currentPlayerIndex bet
-    dispatch (Bet bet)
+    // TODO AI
+    if model.maxBet = 0 then
+        let bet = min 100 model.currentPlayer.cash
+        printfn "Player %i bets $%i" model.currentPlayerIndex bet
+        dispatch (Bet bet)
+    else
+        let minBet = model.maxBet - model.currentPlayer.currentBet
+        let bet = min minBet model.currentPlayer.cash
+        printfn "Player %i meets the min bet with $%i" model.currentPlayerIndex bet
+        dispatch (Bet bet)
 
 let renderReveal winner model dispatch =
     renderHands model false
@@ -92,7 +100,6 @@ let renderGameOver model dispatch =
     exit 0
 
 let view model dispatch =
-    clearTerminal ()
     match model.state with
     | Dealing ->
         renderDealing model dispatch
