@@ -49,7 +49,7 @@ let rec dealCard model =
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = nextPlayerIndex model true
+        currentPlayerIndex = nextPlayerIndex model false
         state = nextState
     }, Cmd.none
 
