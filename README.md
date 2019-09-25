@@ -2,6 +2,13 @@
 
 A simple implementation of a simple variant of Poker, in F# and Elmish, for educational purposes.
 
+This was constructed as part of my role as a mentor in the late-2019 [F# mentoring program](https://fsharp.org/mentorship/).
+
+Some notes about what has been done:
+ - It implements, very basic, deterministic AI (very basic) and limited controls for the player (fixed amounts to bet or raise).
+ - Some of the rules of the game have been skipped; for example five card draw has a betting round before discarding, then further betting. Only the latter round is present in this sample.
+ - The purpose is ultimately to demonstrate how a terminal-based game can be built using Elmish. Hopefully it is education towards that end.
+
 ## Development Steps
 
 1. I described the game in plain english, coming up with this description:
