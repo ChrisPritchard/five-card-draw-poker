@@ -44,7 +44,7 @@ let rec dealCard model =
     let newPlayers = replaceCurrentPlayer addCard model
 
     let nextState = 
-        if Array.exists (fun p -> p.hand.Length < 5) newPlayers
+        if Array.exists (fun p -> p.cash > 0 && p.hand.Length < 5) newPlayers
         then Dealing else Discards
 
     { model with 
@@ -86,7 +86,9 @@ let findWinner model =
 
 let betAmount amount model =
     let increaseBet player = 
-        { player with currentBet = player.currentBet + amount }
+        { player with 
+            currentBet = player.currentBet + amount
+            cash = player.cash - amount }
     let newPlayers = 
         if amount > 0 then replaceCurrentPlayer increaseBet model
         else model.players
@@ -144,13 +146,18 @@ let endRound winner model =
             state = nextState }
     { newModel with currentPlayerIndex = nextPlayerIndex newModel false }, Cmd.none
 
+let isValidBet amount minBet player =
+    let isValid = player.currentBet + amount >= minBet || amount = player.cash
+    let canBet = amount <= player.cash
+    isValid && canBet
+
 let update message model = 
     match message with
     | Deal ->
         dealCard model
     | Discard cards ->
         discardCards cards model
-    | Bet amount when model.currentPlayer.currentBet + amount >= model.maxBet || model.currentPlayer.currentBet + amount = model.currentPlayer.cash ->
+    | Bet amount when isValidBet amount model.maxBet model.currentPlayer ->
         betAmount amount model
     | Fold ->
         foldPlayer model

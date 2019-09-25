@@ -47,7 +47,9 @@ let rec renderBetting (model: Game) dispatch =
         min required model.currentPlayer.cash
 
     printfn "Your cards: %s" (handString model.currentPlayer.hand)
+    printfn "Your cash: $%i" model.currentPlayer.cash
     printfn "Your current bet: $%i" model.currentPlayer.currentBet
+
     printfn "Minimum bet: $%i" minBet
     printfn "Current pool: $%i" model.currentPool
     printfn ""
