@@ -94,7 +94,7 @@ let renderReveal winner model dispatch =
     readLine () |> ignore
     dispatch PayOut
 
-let renderGameOver model dispatch =
+let renderGameOver model _ =
     printfn "Game is over after %i rounds. Winner was player %i" model.rounds (model.finalWinner ())
     printfn ""
     printfn "Press any key to exit."

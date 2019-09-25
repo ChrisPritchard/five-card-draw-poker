@@ -136,20 +136,22 @@ let endRound winner model =
             { player with hand = []; currentBet = 0; cash = player.cash + toAdd })
 
     let nextState = 
-        if (Array.filter (fun p -> p.cash > 0) model.players).Length = 1 then GameOver
+        if (Array.filter (fun p -> p.cash > 0) newPlayers).Length = 1 then GameOver
         else Dealing
 
     let newRounds = if nextState = GameOver then model.rounds else model.rounds + 1
+    let newDealerIndex = if nextState = GameOver then 0 else nextDealerIndex model
 
     let newModel = 
         { model with 
             rounds = newRounds
             players = newPlayers
-            currentPlayerIndex = nextDealerIndex model // we bump this by one in the next statement
-            dealerIndex = nextDealerIndex model
+            currentPlayerIndex = newDealerIndex // we bump this by one in the next statement
+            dealerIndex = newDealerIndex
             discards = newDiscards
             state = nextState }
-    { newModel with currentPlayerIndex = nextPlayerIndex newModel false }, Cmd.none
+    let newPlayerIndex = if nextState = GameOver then 0 else nextPlayerIndex newModel false
+    { newModel with currentPlayerIndex = newPlayerIndex }, Cmd.none
 
 let isValidBet amount minBet player =
     let isValid = player.currentBet + amount >= minBet || amount = player.cash

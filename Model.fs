@@ -16,7 +16,7 @@ with
     member g.currentPool = g.players |> Array.sumBy (fun p -> p.currentBet)
     member g.currentPlayer = g.players.[g.currentPlayerIndex]
     member g.maxBet = g.players |> Seq.map (fun p -> p.currentBet) |> Seq.max
-    member g.finalWinner () = g.players |> Array.indexed |> Array.find (fun (_, p) -> p.hand <> []) |> fst
+    member g.finalWinner () = g.players |> Array.indexed |> Array.find (fun (_, p) -> p.cash > 0) |> fst
 and Player = {
     hand: (int * char) list
     cash: int
