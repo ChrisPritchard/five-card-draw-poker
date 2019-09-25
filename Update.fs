@@ -93,7 +93,9 @@ let betAmount amount model =
         if amount > 0 then replaceCurrentPlayer increaseBet model
         else model.players
 
-    let isEndOfBetRound = model.currentPlayer.currentBet = model.maxBet && amount = 0
+    let isEndOfBetRound = 
+        (model.currentPlayer.currentBet = model.maxBet && amount = 0)
+        || Array.forall (fun p -> p.cash = 0) model.players
     let nextState = 
         if isEndOfBetRound then findWinner model
         else Betting
