@@ -99,10 +99,13 @@ let betAmount amount model =
     let nextState = 
         if isEndOfBetRound then findWinner model
         else Betting
+    let nextPlayerIndex = 
+        if isEndOfBetRound then model.currentPlayerIndex 
+        else nextPlayerIndex model true
 
     { model with 
         players = newPlayers
-        currentPlayerIndex = nextPlayerIndex model true
+        currentPlayerIndex = nextPlayerIndex
         state = nextState
     }, Cmd.none
 
