@@ -10,14 +10,8 @@ let standardDeck =
         | 2 -> (i % 13) + 2, 'H'
         | _ -> (i % 13) + 2, 'D')
 
-let shuffle (rnd: Random) deck = 
-    let rec picker deck rem =
-        if Array.isEmpty rem then deck
-        else
-            let deck = rem.[rnd.Next(0, rem.Length)]::deck
-            let rem = Array.except (Array.ofList deck) rem
-            picker deck rem
-    picker [] deck
+/// this cool trick came from my mentee Mervyn Zly (not sure if he figured it out himself or got it somewhere else)
+let shuffle (rnd: Random) deck = Array.sortBy (fun _ -> rnd.Next ()) deck |> Array.toList
 
 type Hand = 
     private 
